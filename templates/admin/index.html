@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - InterviewAce{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="glass-panel-glow p-4 p-md-5 border border-purple-500">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="badge bg-warning-subtle text-warning border border-warning px-2.5 py-1 uppercase tracking-wider text-xs mb-2">
+                        ADMINISTRATOR DASHBOARD
+                    </span>
+                    <h2 class="fw-black text-white mb-1">System Security & User Management</h2>
+                    <p class="text-gray-300 small mb-0">Role-based access control (RBAC) enforced by backend decorators.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Metrics Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="glass-panel p-4 text-center border border-secondary">
+            <span class="text-muted small uppercase fw-bold">TOTAL USERS</span>
+            <h3 class="fw-black text-white mt-1">{{ metrics.total_users }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="glass-panel p-4 text-center border border-secondary">
+            <span class="text-muted small uppercase fw-bold">ADMINISTRATORS</span>
+            <h3 class="fw-black text-purple mt-1">{{ metrics.admin_count }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="glass-panel p-4 text-center border border-secondary">
+            <span class="text-muted small uppercase fw-bold">CANDIDATES</span>
+            <h3 class="fw-black text-cyan mt-1">{{ metrics.user_count }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="glass-panel p-4 text-center border border-secondary">
+            <span class="text-muted small uppercase fw-bold">VERIFIED EMAILS</span>
+            <h3 class="fw-black text-success mt-1">{{ metrics.verified_count }}</h3>
+        </div>
+    </div>
+</div>
+
+<!-- User Directory Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="glass-panel p-4 border border-secondary">
+            <h4 class="fw-bold text-white mb-3">User Directory Database</h4>
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle small">
+                    <thead>
+                        <tr class="text-muted text-uppercase">
+                            <th>ID</th>
+                            <th>Full Name</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Auth Provider</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in users %}
+                        <tr>
+                            <td class="text-muted">{{ u.id }}</td>
+                            <td class="fw-bold text-white">
+                                {{ u.full_name }}
+                                {% if u.id == user.id %}
+                                    <span class="badge bg-info-subtle text-info ms-1">You</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-gray-300">@{{ u.username }}</td>
+                            <td class="text-gray-400">{{ u.email }}</td>
+                            <td>
+                                <span class="badge {% if u.role == 'ADMIN' %}bg-purple-subtle text-purple border border-purple{% else %}bg-cyan-subtle text-cyan border border-cyan{% endif %} px-2 py-1 uppercase">
+                                    {{ u.role }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if u.email_verified %}
+                                    <span class="text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i> Verified</span>
+                                {% else %}
+                                    <span class="text-warning"><i class="bi bi-clock-history me-1"></i> Pending</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-cyan font-monospace uppercase">{{ u.auth_provider }}</td>
+                            <td class="text-end">
+                                {% if u.id != user.id %}
+                                    <form action="{{ url_for('admin.toggle_role', target_user_id=u.id) }}" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-outline-secondary btn-sm rounded-3">
+                                            Toggle Role ({{ 'Make Admin' if u.role == 'USER' else 'Make Candidate' }})
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <span class="text-muted small">Current Admin</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

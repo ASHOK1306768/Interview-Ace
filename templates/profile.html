@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Account Settings - InterviewAce{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <div class="glass-panel p-4 p-md-5 border border-secondary shadow-lg">
+            <h3 class="fw-black text-white mb-1">Account Settings</h3>
+            <p class="text-gray-400 small mb-4">Manage your profile details, security, and connected accounts.</p>
+
+            <!-- Navigation Tabs -->
+            <ul class="nav nav-tabs border-secondary mb-4">
+                <li class="nav-item">
+                    <a class="nav-link {% if not active_tab or active_tab == 'profile' %}active bg-transparent text-cyan border-cyan border-bottom-0 fw-bold{% else %}text-gray-400{% endif %}" href="{{ url_for('profile.index') }}">
+                        <i class="bi bi-person me-1"></i> Profile Information
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if active_tab == 'connected' %}active bg-transparent text-cyan border-cyan border-bottom-0 fw-bold{% else %}text-gray-400{% endif %}" href="{{ url_for('profile.connected_accounts') }}">
+                        <i class="bi bi-link-45deg me-1"></i> Connected Accounts
+                    </a>
+                </li>
+            </ul>
+
+            {% if not active_tab or active_tab == 'profile' %}
+            <!-- Profile Info Content -->
+            <div class="row g-4">
+                <div class="col-md-4 text-center">
+                    {% if user.profile_image %}
+                        <img src="{{ user.profile_image }}" alt="Profile Image" class="rounded-circle border border-cyan mb-3 shadow" style="width: 110px; height: 110px; object-fit: cover;">
+                    {% else %}
+                        <div class="btn-gradient rounded-circle d-inline-flex align-items-center justify-content-center text-white fw-black mb-3 shadow" style="width: 110px; height: 110px; font-size: 42px;">
+                            {{ user.full_name[0].upper() }}
+                        </div>
+                    {% endif %}
+                    <h5 class="fw-bold text-white mb-0">{{ user.full_name }}</h5>
+                    <p class="text-muted small">@{{ user.username }}</p>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-borderless align-middle small">
+                            <tbody>
+                                <tr>
+                                    <td class="text-muted fw-semibold">Full Name:</td>
+                                    <td class="fw-bold text-white">{{ user.full_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted fw-semibold">Username:</td>
+                                    <td class="fw-bold text-white">{{ user.username }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted fw-semibold">Email Address:</td>
+                                    <td class="fw-bold text-white">
+                                        {{ user.email }}
+                                        {% if user.email_verified %}
+                                            <span class="badge bg-success-subtle text-success ms-2">Verified</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted fw-semibold">Account Role:</td>
+                                    <td>
+                                        <span class="badge bg-purple-subtle text-purple border border-purple px-2 py-1 uppercase">{{ user.role }}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted fw-semibold">Auth Provider:</td>
+                                    <td class="text-cyan font-monospace uppercase fw-bold">{{ user.auth_provider }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            {% else %}
+            <!-- Connected Accounts Content -->
+            <div class="space-y-4">
+                <div class="glass-panel p-4 border border-secondary rounded-3">
+                    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="bg-dark p-3 rounded-3 border border-secondary text-white">
+                                <i class="bi bi-github fs-2"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold text-white mb-1">GitHub Account</h5>
+                                {% if user.github_id %}
+                                    <p class="text-success small mb-0">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Connected as <strong>@{{ user.github_username }}</strong> (ID: {{ user.github_id }})
+                                    </p>
+                                {% else %}
+                                    <p class="text-gray-400 small mb-0">Connect your GitHub account for seamless 1-click OAuth login.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div>
+                            {% if user.github_id %}
+                                <form action="{{ url_for('profile.disconnect_github') }}" method="POST" onsubmit="return confirm('Are you sure you want to disconnect GitHub?');">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm rounded-3">
+                                        <i class="bi bi-x-circle me-1"></i> Disconnect GitHub
+                                    </button>
+                                </form>
+                            {% else %}
+                                <a href="{{ url_for('github_auth.login_github') }}" class="btn btn-purple text-white btn-sm rounded-3">
+                                    <i class="bi bi-github me-1"></i> Connect GitHub
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

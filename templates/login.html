@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Login - InterviewAce{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center min-vh-75">
+    <div class="col-md-6 col-lg-5">
+        <div class="glass-panel-glow p-4 p-md-5 border border-purple-500 shadow-lg">
+            <!-- Logo Header -->
+            <div class="text-center mb-4">
+                <div class="btn-gradient rounded-4 d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 54px; height: 54px;">
+                    <span class="fs-2 fw-black text-white">A</span>
+                </div>
+                <h3 class="fw-black text-white mb-1">InterviewAce</h3>
+                <p class="text-cyan small">AI-Powered Mock Interview Platform</p>
+            </div>
+
+            <!-- Login Form -->
+            <form action="{{ url_for('auth.login') }}" method="POST" id="loginForm">
+                <div class="mb-3">
+                    <label class="form-label text-gray-300 small fw-semibold">Email or Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary text-muted"><i class="bi bi-person"></i></span>
+                        <input type="text" name="identifier" value="{{ identifier if identifier else '' }}" class="form-control" placeholder="name@example.com or username" required autofocus>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-gray-300 small fw-semibold">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary text-muted"><i class="bi bi-lock"></i></span>
+                        <input type="password" name="password" id="passwordInput" class="form-control {% if has_error %}is-invalid{% endif %}" placeholder="Enter your password" required>
+                        <button class="btn btn-outline-secondary text-gray-400" type="button" id="togglePassword">
+                            <i class="bi bi-eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                    {% if has_error %}
+                    <div class="text-danger small mt-1 font-semibold">
+                        <i class="bi bi-exclamation-circle-fill me-1"></i> Incorrect password. Access denied.
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-4 small">
+                    <div class="form-check">
+                        <input class="form-check-input bg-dark border-secondary" type="checkbox" name="remember" id="rememberMe" checked>
+                        <label class="form-check-label text-gray-300" for="rememberMe">Remember Me</label>
+                    </div>
+                    <a href="{{ url_for('auth.forgot_password') }}" class="text-purple text-decoration-none fw-semibold">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-gradient w-100 py-2.5 rounded-3 mb-3 shadow" id="loginBtn">
+                    Verify Access
+                </button>
+            </form>
+
+            <div class="text-center text-muted small uppercase fw-bold mb-3 tracking-wider">OR CONTINUE WITH</div>
+
+            <!-- GitHub OAuth Button -->
+            <a href="{{ url_for('github_auth.login_github') }}" class="btn btn-dark border border-secondary text-white w-100 py-2.5 rounded-3 d-flex align-items-center justify-content-center gap-2 mb-4 hover-bg-secondary transition">
+                <i class="bi bi-github fs-5"></i>
+                <span class="fw-semibold">Continue with GitHub</span>
+            </a>
+
+            <!-- Register Redirect -->
+            <div class="text-center small text-gray-400">
+                Don't have an account? 
+                <a href="{{ url_for('auth.register') }}" class="text-cyan text-decoration-none fw-bold ms-1">Create Account</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

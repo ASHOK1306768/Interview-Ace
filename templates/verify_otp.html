@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Verify Email OTP - InterviewAce{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center min-vh-75">
+    <div class="col-md-6 col-lg-5">
+        <div class="glass-panel-glow p-4 p-md-5 border border-purple-500 shadow-lg text-center">
+            <div class="btn-gradient rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 60px; height: 60px;">
+                <i class="bi bi-shield-lock-fill fs-2 text-white"></i>
+            </div>
+            
+            <h3 class="fw-black text-white mb-1">Verify Email OTP</h3>
+            <p class="text-gray-300 small mb-4">
+                We sent a 6-digit verification code to <br>
+                <strong class="text-cyan">{{ email }}</strong>
+            </p>
+
+            <form action="{{ url_for('auth.verify_otp') }}" method="POST">
+                <div class="mb-4">
+                    <input type="text" name="otp" class="form-control otp-input" placeholder="000000" maxlength="6" pattern="[0-9]{6}" required autofocus>
+                    <div class="form-text text-gray-400 small mt-2">
+                        Code expires in <span id="timer" class="text-cyan font-monospace fw-bold">10:00</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-gradient w-100 py-2.5 rounded-3 mb-3 shadow">
+                    Verify & Continue
+                </button>
+            </form>
+
+            <form action="{{ url_for('auth.resend_otp') }}" method="POST" class="mt-2">
+                <button type="submit" class="btn btn-link text-purple text-decoration-none small fw-semibold" id="resendBtn">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i> Resend Verification Code
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 10-minute countdown timer
+    let duration = 600;
+    const timerDisplay = document.getElementById('timer');
+    const interval = setInterval(() => {
+        const minutes = Math.floor(duration / 60);
+        const seconds = duration % 60;
+        timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        if (--duration < 0) {
+            clearInterval(interval);
+            timerDisplay.textContent = 'Expired';
+            timerDisplay.classList.replace('text-cyan', 'text-danger');
+        }
+    }, 1000);
+</script>
+{% endblock %}
